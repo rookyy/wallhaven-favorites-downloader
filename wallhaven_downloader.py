@@ -118,6 +118,10 @@ def main():
         print(f'{COLOR_RED}Fatal error:{END_COLOR} Download folder not found.')
         return
 
+    if not os.access(dowload_dir, os.W_OK):
+        print(f'{COLOR_RED}Fatal error:{END_COLOR} Not enough permissions to write to download folder.')
+        return
+
     try:
         session = login()
         print('Fetching collection ids...')
