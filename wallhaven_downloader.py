@@ -20,7 +20,7 @@ def login():
         response = requests.post(login_url, data={'username': username, 'password': password})
 
         if response.url != login_url:
-            print('\nLogin successful.')
+            print('Login successful.')
             return response.cookies
 
         print('Incorrect username/password. Try again.\n')
@@ -87,16 +87,16 @@ def download_collection(collection_id, session):
     os.chdir(collection_name)
 
     wallpaper_count = len(wallpaper_ids)
-    for i, wp_id in enumerate(wallpaper_ids):
+    for i, wp_id in enumerate(wallpaper_ids, start=1):
         filename = fetch_filename(wp_id, session)
         response = requests.get(wallpaper_base_url + filename)
 
         with open(filename, 'wb') as f:
             f.write(response.content)
 
-        print(f'\rDownloading collection "{collection_name}": {i + 1}/{wallpaper_count}', end='')
+        print(f'\rDownloading collection "{collection_name}": {i}/{wallpaper_count}', end='')
 
-    print('\n')
+    print()
     os.chdir('..')
 
 
