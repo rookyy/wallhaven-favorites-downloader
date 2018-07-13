@@ -32,21 +32,23 @@ def fetch_filename(wp_id, session=None):
     `session` parameter containing cookies of a successful login is required
     to run this function on an NSFW wallpaper.
     '''
-    markup = requests.get(f'https://alpha.wallhaven.cc/wallpaper/{wp_id}', cookies=session).text
+    wallpaper_url = f'https://alpha.wallhaven.cc/wallpaper/{wp_id}'
+    markup = requests.get(wallpaper_url, cookies=session).text
     soup = BeautifulSoup(markup, 'lxml')
 
-    wallpaper_url = soup.find('img', id='wallpaper')['src']
-    return wallpaper_url.rpartition('/')[-1]
+    image_path = soup.find('img', id='wallpaper')['src']
+    return image_path.rpartition('/')[-1]
 
 
 def fetch_wallpaper_ids(page):
+    '''Given a BeautifulSoup object containing a page with wallpaper thumbnails
+    (e.g. collection, search result) return the list of wallpaper ids on that page.
+    '''
     thumbnails = page.find('section', class_='thumb-listing-page').ul
     return [li.figure['data-wallpaper-id'] for li in thumbnails.find_all('li')]
 
 
 def fetch_collections(session):
-    print('Fetching collection ids...\n')
-
     favs_url = 'https://alpha.wallhaven.cc/favorites'
     favs_html = requests.get(favs_url, cookies=session).text
     favs_soup = BeautifulSoup(favs_html, 'lxml')
@@ -91,8 +93,8 @@ def download_collection(collection_id, session):
         filename = fetch_filename(wp_id, session)
         response = requests.get(wallpaper_base_url + filename)
 
-        with open(filename, 'wb') as f:
-            f.write(response.content)
+        with open(filename, 'wb') as image:
+            image.write(response.content)
 
         print(f'\rDownloading collection "{collection_name}": {i}/{wallpaper_count}', end='')
 
@@ -118,6 +120,7 @@ def main():
 
     try:
         session = login()
+        print('Fetching collection ids...')
         collection_ids = fetch_collections(session)
 
         for collection in collection_ids:
