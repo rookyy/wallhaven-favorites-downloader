@@ -115,11 +115,13 @@ def main():
     try:
         os.chdir(dowload_dir)
     except FileNotFoundError:
-        print(f'{COLOR_RED}Fatal error:{END_COLOR} Download folder not found.')
+        print(f'{COLOR_RED}Fatal error:{END_COLOR} '
+              'Download folder not found.')
         return
 
     if not os.access(dowload_dir, os.W_OK):
-        print(f'{COLOR_RED}Fatal error:{END_COLOR} Not enough permissions to write to download folder.')
+        print(f'{COLOR_RED}Fatal error:{END_COLOR} '
+              'Not enough permissions to write to download folder.')
         return
 
     try:
@@ -130,7 +132,8 @@ def main():
         for collection in collection_ids:
             download_collection(collection, session)
     except requests.ConnectionError:
-        print(f'{COLOR_RED}Fatal error:{END_COLOR} There was a problem with network.')
+        print(f'{COLOR_RED}Fatal error:{END_COLOR} '
+              'There was a problem with network.')
 
 
 if __name__ == '__main__':
